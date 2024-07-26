@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Textured Object</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/MTLLoader.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #ffffff; /* Sätt bakgrundsfärgen på hela sidan till vit */
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Skapa en scen
+        var scene = new THREE.Scene();
+
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 4, 5); // Flytta kameran upp (y) och bort (z)
+
+        // Sätt kameran att peka mot mitten av scenen
+        camera.lookAt(0, 0, 0);
+        
+        // Skapa en WebGL-renderare och sätt storleken
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0xffffff); // Sätt bakgrundsfärgen till vit
+        document.body.appendChild(renderer.domElement);
+
+        // Lägg till belysning
+        var ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+
+        var pointLight = new THREE.PointLight(0xffffff, 1);
+        pointLight.position.set(10, 10, 10);
+        scene.add(pointLight);
+
+        // Ladda material och objekt
+        var mtlLoader = new THREE.MTLLoader();
+        mtlLoader.load('bumpy2.mtl', function (materials) {
+            materials.preload();
+            var objLoader = new THREE.OBJLoader();
+            objLoader.setMaterials(materials);
+            objLoader.load('bumpy2.obj', function (object) {
+                scene.add(object);
+
+                // Rendera scenen och rotera objektet
+                function animate() {
+                    requestAnimationFrame(animate);
+                    object.rotation.y += 0.005; // Rota objektet
+                    renderer.render(scene, camera);
+                }
+                animate();
+            });
+        });
+    </script>
+</body>
+</html>
